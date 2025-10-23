@@ -527,22 +527,23 @@
 
 ## 8. 개발 로드맵
 
-### Phase 1: MVP (4주)
-**Week 1-2: 기본 인프라 구축**
-- [ ] Next.js 프로젝트 초기화
-- [ ] GitHub 저장소 생성 및 Vercel 연동
-- [ ] Google Sheets API 연동
-- [ ] Naver Maps API 연동
-- [ ] NextAuth.js 소셜 로그인 구현
-- [ ] 기본 UI 컴포넌트 라이브러리 구축
+### Phase 1: MVP (4주) - **진행 중** 🚀
+**Week 1-2: 기본 인프라 구축** ✅ **완료**
+- [x] Next.js 프로젝트 초기화 (Next.js 15 + TypeScript + Tailwind CSS)
+- [x] GitHub 저장소 생성 및 Vercel 연동 준비 완료
+- [x] Google Sheets API 연동 (CRUD 작업 완료)
+- [x] Naver Maps API 연동 (지도 표시, 현재 위치, 마커)
+- [x] NextAuth.js 소셜 로그인 구현 (Google, Kakao, Naver OAuth 설정)
+- [x] 기본 UI 컴포넌트 라이브러리 구축 (shadcn/ui: Button, Card, Input, Label)
 
-**Week 3-4: 핵심 기능 개발**
-- [ ] 리포트 작성 기능 (장벽/칭찬)
-- [ ] 지도 마커 표시
-- [ ] 리포트 목록/상세 페이지
-- [ ] Claude API 이미지 분석 연동
-- [ ] 기본 포인트 시스템
-- [ ] 사용자 프로필
+**Week 3-4: 핵심 기능 개발** ✅ **75% 완료**
+- [x] 리포트 작성 기능 (장벽/칭찬) - 4단계 폼, 이미지 업로드, GPS 위치
+- [x] 지도 마커 표시 - 실시간 마커, 타입별 색상, 클릭 시 상세 정보
+- [x] 리포트 상세 보기 (지도 마커 클릭 시 패널 표시)
+- [x] Claude API 이미지 분석 연동 (자동 카테고리 분류, 심각도 평가)
+- [ ] 리포트 목록 페이지 (별도 페이지)
+- [ ] 기본 포인트 시스템 (데이터 구조만 준비, 로직 미구현)
+- [ ] 사용자 프로필 페이지
 
 ### Phase 2: 게임화 & 검증 (3주)
 **Week 5-6: 게임화 요소**
