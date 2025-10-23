@@ -260,16 +260,21 @@ export async function deleteRowById(
  */
 export async function objectToValues(
   sheetName: string,
-  obj: Record<string, unknown>
+  obj: Record<string, unknown>,
+  cachedHeaders?: string[]
 ): Promise<unknown[]> {
-  const sheets = getGoogleSheetsClient();
+  let headers: string[];
 
-  const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID!,
-    range: `${sheetName}!A1:Z1`,
-  });
-
-  const headers = response.data.values?.[0] || [];
+  if (cachedHeaders) {
+    headers = cachedHeaders;
+  } else {
+    const sheets = getGoogleSheetsClient();
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID!,
+      range: `${sheetName}!A1:Z1`,
+    });
+    headers = response.data.values?.[0] || [];
+  }
 
   return headers.map((header) => {
     const value = obj[header];
@@ -281,4 +286,22 @@ export async function objectToValues(
 
     return value ?? '';
   });
+}
+
+/**
+ * 시트의 헤더 가져오기 (한 번만 읽고 캐싱용)
+ */
+export async function getSheetHeaders(sheetName: string): Promise<string[]> {
+  const sheets = getGoogleSheetsClient();
+
+  if (!SPREADSHEET_ID) {
+    throw new Error('SPREADSHEET_ID is not configured');
+  }
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${sheetName}!A1:Z1`,
+  });
+
+  return response.data.values?.[0] || [];
 }

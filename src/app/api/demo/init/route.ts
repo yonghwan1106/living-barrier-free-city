@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { appendRow, appendRows, findRows, objectToValues } from '@/lib/google-sheets/operations';
+import { appendRow, appendRows, findRows, objectToValues, getSheetHeaders } from '@/lib/google-sheets/operations';
 import { SHEET_NAMES } from '@/lib/google-sheets/client';
 import type { User, Report, Team, BarrierCategory, PraiseCategory } from '@/types';
 
@@ -149,6 +149,13 @@ export async function POST() {
     const createdUsers: User[] = [];
     const createdReports: Report[] = [];
 
+    // Cache headers to avoid repeated API calls (1 read instead of 3+45-72)
+    console.log('Fetching sheet headers...');
+    const usersHeaders = await getSheetHeaders(SHEET_NAMES.USERS);
+    const reportsHeaders = await getSheetHeaders(SHEET_NAMES.REPORTS);
+    const teamsHeaders = await getSheetHeaders(SHEET_NAMES.TEAMS);
+    console.log('Headers cached successfully');
+
     // Create demo users (collect all user data first)
     const userRows: unknown[][] = [];
     for (const demoConfig of DEMO_USERS) {
@@ -166,7 +173,7 @@ export async function POST() {
         last_login: now,
       };
 
-      const values = await objectToValues(SHEET_NAMES.USERS, user as unknown as Record<string, unknown>);
+      const values = await objectToValues(SHEET_NAMES.USERS, user as unknown as Record<string, unknown>, usersHeaders);
       userRows.push(values);
       createdUsers.push(user);
     }
@@ -221,7 +228,7 @@ export async function POST() {
           updated_at: reportDate.toISOString(),
         };
 
-        const reportValues = await objectToValues(SHEET_NAMES.REPORTS, report as unknown as Record<string, unknown>);
+        const reportValues = await objectToValues(SHEET_NAMES.REPORTS, report as unknown as Record<string, unknown>, reportsHeaders);
         allReportRows.push(reportValues);
         createdReports.push(report);
       }
@@ -255,7 +262,7 @@ export async function POST() {
       updated_at: now,
     };
 
-    const teamValues = await objectToValues(SHEET_NAMES.TEAMS, demoTeam as unknown as Record<string, unknown>);
+    const teamValues = await objectToValues(SHEET_NAMES.TEAMS, demoTeam as unknown as Record<string, unknown>, teamsHeaders);
     await appendRow(SHEET_NAMES.TEAMS, teamValues);
 
     // Create sample quests by calling the quest init endpoint
