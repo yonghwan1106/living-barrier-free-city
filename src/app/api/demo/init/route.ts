@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { appendRow, findRows, objectToValues } from '@/lib/google-sheets/operations';
+import { appendRow, appendRows, findRows, objectToValues } from '@/lib/google-sheets/operations';
 import { SHEET_NAMES } from '@/lib/google-sheets/client';
 import type { User, Report, Team, BarrierCategory, PraiseCategory } from '@/types';
+
+// Helper function to add delay
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Demo user configurations
 const DEMO_USERS = [
@@ -146,7 +149,8 @@ export async function POST() {
     const createdUsers: User[] = [];
     const createdReports: Report[] = [];
 
-    // Create demo users
+    // Create demo users (collect all user data first)
+    const userRows: unknown[][] = [];
     for (const demoConfig of DEMO_USERS) {
       const user: User = {
         user_id: uuidv4(),
@@ -163,11 +167,17 @@ export async function POST() {
       };
 
       const values = await objectToValues(SHEET_NAMES.USERS, user as unknown as Record<string, unknown>);
-      await appendRow(SHEET_NAMES.USERS, values);
+      userRows.push(values);
       createdUsers.push(user);
     }
 
-    // Create sample reports for each user
+    // Batch append all users at once (1 API call instead of 3)
+    await appendRows(SHEET_NAMES.USERS, userRows);
+    console.log(`Created ${createdUsers.length} demo users in batch`);
+
+    // Create sample reports for each user (collect all first, then batch append)
+    const allReportRows: unknown[][] = [];
+
     for (let i = 0; i < createdUsers.length; i++) {
       const user = createdUsers[i];
       const numReports = 15 + Math.floor(Math.random() * 10); // 15-24 reports per user (총 45-72개)
@@ -212,10 +222,24 @@ export async function POST() {
         };
 
         const reportValues = await objectToValues(SHEET_NAMES.REPORTS, report as unknown as Record<string, unknown>);
-        await appendRow(SHEET_NAMES.REPORTS, reportValues);
+        allReportRows.push(reportValues);
         createdReports.push(report);
       }
     }
+
+    // Batch append reports in chunks of 20 to avoid rate limits
+    const BATCH_SIZE = 20;
+    for (let i = 0; i < allReportRows.length; i += BATCH_SIZE) {
+      const batch = allReportRows.slice(i, i + BATCH_SIZE);
+      await appendRows(SHEET_NAMES.REPORTS, batch);
+      console.log(`Created batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batch.length} reports`);
+
+      // Add a 1-second delay between batches to avoid rate limits
+      if (i + BATCH_SIZE < allReportRows.length) {
+        await delay(1000);
+      }
+    }
+    console.log(`Created ${createdReports.length} total reports in ${Math.ceil(allReportRows.length / BATCH_SIZE)} batches`);
 
     // Create a demo team
     const demoTeam: Team = {

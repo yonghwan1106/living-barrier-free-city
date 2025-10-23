@@ -28,6 +28,37 @@ export async function appendRow(sheetName: string, values: unknown[]) {
 }
 
 /**
+ * 시트에 여러 행 한번에 추가 (배치 작업)
+ */
+export async function appendRows(sheetName: string, rowsData: unknown[][]) {
+  const sheets = getGoogleSheetsClient();
+
+  if (!SPREADSHEET_ID) {
+    throw new Error('SPREADSHEET_ID is not configured');
+  }
+
+  if (rowsData.length === 0) {
+    return;
+  }
+
+  try {
+    const response = await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${sheetName}!A:A`,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: rowsData,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error appending rows:', error);
+    throw error;
+  }
+}
+
+/**
  * 시트에서 모든 데이터 조회
  */
 export async function getAllRows(sheetName: string) {
