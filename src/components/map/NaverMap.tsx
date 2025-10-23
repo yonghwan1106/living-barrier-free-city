@@ -46,6 +46,7 @@ export function NaverMap({
     if (mapInstanceRef.current) return;
 
     const { naver } = window;
+    if (!naver?.maps) return;
 
     // 현재 위치가 있으면 사용, 없으면 기본 center 사용
     const mapCenter = currentLocation || center;

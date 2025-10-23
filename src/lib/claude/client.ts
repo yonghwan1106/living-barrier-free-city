@@ -26,7 +26,7 @@ export async function imageUrlToBase64(imageUrl: string): Promise<string> {
 }
 
 // 이미지 타입 감지
-export function detectImageType(imageUrl: string): string {
+export function detectImageType(imageUrl: string): 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp' {
   const extension = imageUrl.split('.').pop()?.toLowerCase();
 
   switch (extension) {

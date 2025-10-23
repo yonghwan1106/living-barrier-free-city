@@ -19,11 +19,14 @@ export function ReportMarkers({ map, reports, onMarkerClick }: ReportMarkersProp
     markers.forEach((marker) => marker.setMap(null));
 
     const { naver } = window;
+    if (!naver?.maps) return;
+
+    const naverMaps = naver.maps;
     const newMarkers: NaverMarker[] = [];
 
     // 각 리포트에 대해 마커 생성
     reports.forEach((report) => {
-      const position = new naver.maps.LatLng(report.latitude, report.longitude);
+      const position = new naverMaps.LatLng(report.latitude, report.longitude);
 
       // 마커 색상 결정
       let markerColor = '#DC2626'; // 기본: 빨강 (장벽)
@@ -59,18 +62,18 @@ export function ReportMarkers({ map, reports, onMarkerClick }: ReportMarkersProp
         </div>
       `;
 
-      const marker = new naver.maps.Marker({
+      const marker = new naverMaps.Marker({
         position,
         map,
         icon: {
           content: markerContent,
-          anchor: new naver.maps.Point(15, 15),
+          anchor: new naverMaps.Point(15, 15),
         },
         zIndex: report.status === 'active' ? 100 : 50,
       });
 
       // 마커 클릭 이벤트
-      naver.maps.Event.addListener(marker, 'click', () => {
+      naverMaps.Event.addListener(marker, 'click', () => {
         if (onMarkerClick) {
           onMarkerClick(report);
         }

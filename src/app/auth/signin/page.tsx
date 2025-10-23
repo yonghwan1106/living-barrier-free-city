@@ -6,8 +6,9 @@ import { Card } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function SignInPage() {
+function SignInContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
   const error = searchParams.get('error');
@@ -127,5 +128,13 @@ export default function SignInPage() {
         </p>
       </Card>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">로딩 중...</div>}>
+      <SignInContent />
+    </Suspense>
   );
 }

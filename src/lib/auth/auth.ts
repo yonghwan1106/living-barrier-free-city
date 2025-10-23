@@ -52,7 +52,7 @@ export const authConfig: NextAuthConfig = {
             last_login: now,
           };
 
-          const values = await objectToValues(SHEET_NAMES.USERS, newUser);
+          const values = await objectToValues(SHEET_NAMES.USERS, newUser as unknown as Record<string, unknown>);
           await appendRow(SHEET_NAMES.USERS, values);
 
           console.log('New user created:', newUser.user_id);
@@ -82,10 +82,10 @@ export const authConfig: NextAuthConfig = {
 
           if (users.length > 0) {
             const userData = users[0];
-            session.user.id = userData.user_id;
-            session.user.xp = userData.xp;
-            session.user.level = userData.level;
-            session.user.nickname = userData.nickname;
+            session.user.id = String(userData.user_id);
+            session.user.xp = Number(userData.xp || 0);
+            session.user.level = Number(userData.level || 1);
+            session.user.nickname = String(userData.nickname || '');
           }
         } catch (error) {
           console.error('Error fetching user data in session:', error);

@@ -14,6 +14,24 @@ declare global {
         InfoWindow: {
           new (options: Record<string, unknown>): unknown;
         };
+        Point: {
+          new (x: number, y: number): unknown;
+        };
+        Position: {
+          TOP_LEFT: unknown;
+          TOP_CENTER: unknown;
+          TOP_RIGHT: unknown;
+          LEFT_CENTER: unknown;
+          CENTER: unknown;
+          RIGHT_CENTER: unknown;
+          BOTTOM_LEFT: unknown;
+          BOTTOM_CENTER: unknown;
+          BOTTOM_RIGHT: unknown;
+        };
+        Event: {
+          addListener(target: unknown, event: string, listener: (e: unknown) => void): void;
+          removeListener(listener: unknown): void;
+        };
       };
     };
   }

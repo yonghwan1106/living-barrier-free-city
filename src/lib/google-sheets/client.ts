@@ -165,7 +165,7 @@ export async function initializeSheets() {
           range: `${sheetName}!A1`,
           valueInputOption: 'RAW',
           requestBody: {
-            values: [headers],
+            values: [[...headers]],
           },
         });
       }

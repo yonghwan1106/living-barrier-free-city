@@ -50,7 +50,7 @@ export async function updateQuestProgress(
           user_id: userId,
           quest_id: quest.quest_id,
           progress: 1,
-          completed: 1 >= quest.target_count,
+          completed: 1 >= Number(quest.target_count || 1),
           claimed: false,
           started_at: new Date().toISOString(),
         };
@@ -62,10 +62,10 @@ export async function updateQuestProgress(
         const userQuest = userQuests[0];
 
         if (!userQuest.completed) {
-          const newProgress = (userQuest.progress || 0) + 1;
-          const isCompleted = newProgress >= quest.target_count;
+          const newProgress = Number(userQuest.progress || 0) + 1;
+          const isCompleted = newProgress >= Number(quest.target_count || 1);
 
-          await updateRowById(SHEET_NAMES.USER_QUESTS, 'user_quest_id', userQuest.user_quest_id, {
+          await updateRowById(SHEET_NAMES.USER_QUESTS, 'user_quest_id', String(userQuest.user_quest_id), {
             progress: newProgress,
             completed: isCompleted,
             completed_at: isCompleted ? new Date().toISOString() : undefined,
