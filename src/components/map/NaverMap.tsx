@@ -48,11 +48,9 @@ export function NaverMap({
     const { naver } = window;
     if (!naver?.maps) return;
 
-    // 현재 위치가 있으면 사용, 없으면 기본 center 사용
-    const mapCenter = currentLocation || center;
-
+    // 항상 props의 center를 사용 (초기 뷰 고정)
     const mapOptions = {
-      center: new naver.maps.LatLng(mapCenter.lat, mapCenter.lng),
+      center: new naver.maps.LatLng(center.lat, center.lng),
       zoom,
       zoomControl: true,
       zoomControlOptions: {
@@ -70,31 +68,36 @@ export function NaverMap({
     const map = new naver.maps.Map(mapRef.current, mapOptions);
     mapInstanceRef.current = map;
 
-    // 현재 위치에 마커 표시
-    if (currentLocation) {
-      new naver.maps.Marker({
-        position: new naver.maps.LatLng(currentLocation.lat, currentLocation.lng),
-        map,
-        icon: {
-          content: `
-            <div style="
-              width: 20px;
-              height: 20px;
-              background-color: #3b82f6;
-              border: 3px solid white;
-              border-radius: 50%;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            "></div>
-          `,
-          anchor: new naver.maps.Point(10, 10),
-        },
-      });
-    }
-
     if (onMapLoad) {
       onMapLoad(map);
     }
-  }, [isLoaded, center, zoom, currentLocation, onMapLoad]);
+  }, [isLoaded, center, zoom, onMapLoad]);
+
+  // 현재 위치 마커만 별도로 추가
+  useEffect(() => {
+    if (!mapInstanceRef.current || !currentLocation) return;
+
+    const { naver } = window;
+    if (!naver?.maps) return;
+
+    new naver.maps.Marker({
+      position: new naver.maps.LatLng(currentLocation.lat, currentLocation.lng),
+      map: mapInstanceRef.current,
+      icon: {
+        content: `
+          <div style="
+            width: 20px;
+            height: 20px;
+            background-color: #3b82f6;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          "></div>
+        `,
+        anchor: new naver.maps.Point(10, 10),
+      },
+    });
+  }, [currentLocation]);
 
   if (error) {
     return (

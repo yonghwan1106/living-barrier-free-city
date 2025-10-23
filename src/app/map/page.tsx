@@ -85,6 +85,34 @@ export default function MapPage() {
     }
   };
 
+  const handleSearch = () => {
+    if (!map || !searchQuery.trim()) return;
+
+    // 리포트 주소나 도시 이름으로 검색
+    const searchTerm = searchQuery.toLowerCase().trim();
+    const matchedReport = reports.find(
+      (report) =>
+        report.address?.toLowerCase().includes(searchTerm) ||
+        report.city?.toLowerCase().includes(searchTerm) ||
+        report.district?.toLowerCase().includes(searchTerm)
+    );
+
+    if (matchedReport) {
+      const { naver } = window;
+      if (!naver?.maps) return;
+
+      const location = new naver.maps.LatLng(
+        matchedReport.latitude,
+        matchedReport.longitude
+      );
+      map.setCenter(location);
+      map.setZoom(15);
+      setSelectedReport(matchedReport);
+    } else {
+      alert('검색 결과가 없습니다. 다른 검색어를 시도해보세요.');
+    }
+  };
+
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Header */}
@@ -95,12 +123,24 @@ export default function MapPage() {
       {/* Search Bar */}
       <div className="absolute top-20 left-4 right-4 z-10 flex gap-2">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-8 z-10"
+            onClick={handleSearch}
+          >
+            <Search className="h-4 w-4 text-gray-600" />
+          </Button>
           <Input
             type="text"
-            placeholder="장소, 주소 검색..."
+            placeholder="장소, 주소 검색... (예: 수원, 부천, 성남)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
             className="pl-10 bg-white shadow-lg"
           />
         </div>
@@ -167,8 +207,8 @@ export default function MapPage() {
       {/* Map */}
       <div className="h-full w-full pt-16">
         <NaverMap
-          center={{ lat: 37.5665, lng: 126.9780 }}
-          zoom={13}
+          center={{ lat: 37.4, lng: 127.1 }}
+          zoom={10}
           onMapLoad={handleMapLoad}
         />
         {map && (
