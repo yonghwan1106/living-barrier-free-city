@@ -24,9 +24,37 @@ export function ReportMarkers({ map, reports, onMarkerClick }: ReportMarkersProp
     const naverMaps = naver.maps;
     const newMarkers: NaverMarker[] = [];
 
+    // 같은 위치에 있는 리포트들을 그룹화
+    const locationGroups = new Map<string, Report[]>();
+    reports.forEach((report) => {
+      const key = `${report.latitude},${report.longitude}`;
+      if (!locationGroups.has(key)) {
+        locationGroups.set(key, []);
+      }
+      locationGroups.get(key)!.push(report);
+    });
+
     // 각 리포트에 대해 마커 생성
     reports.forEach((report) => {
-      const position = new naverMaps.LatLng(report.latitude, report.longitude);
+      const key = `${report.latitude},${report.longitude}`;
+      const group = locationGroups.get(key)!;
+      const groupIndex = group.findIndex(r => r.report_id === report.report_id);
+      const groupSize = group.length;
+
+      // 같은 위치에 여러 마커가 있으면 원형으로 배치
+      let offsetLat = 0;
+      let offsetLng = 0;
+      if (groupSize > 1) {
+        const angle = (groupIndex / groupSize) * 2 * Math.PI;
+        const radius = 0.0005; // 약 50m 정도의 반경
+        offsetLat = Math.cos(angle) * radius;
+        offsetLng = Math.sin(angle) * radius;
+      }
+
+      const position = new naverMaps.LatLng(
+        report.latitude + offsetLat,
+        report.longitude + offsetLng
+      );
 
       // 마커 색상 결정
       let markerColor = '#DC2626'; // 기본: 빨강 (장벽)

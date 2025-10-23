@@ -60,7 +60,7 @@ export function NaverMap({
       },
       mapTypeControl: true,
       mapTypeControlOptions: {
-        position: naver.maps.Position.TOP_LEFT,
+        position: naver.maps.Position.RIGHT_CENTER,
       },
       scaleControl: true,
       logoControl: false,
