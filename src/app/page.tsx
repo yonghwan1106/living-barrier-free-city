@@ -17,14 +17,11 @@ export default function Home() {
             <Link href="/map" className="text-sm font-medium hover:text-blue-600">
               지도
             </Link>
-            <Link href="/reports" className="text-sm font-medium hover:text-blue-600">
-              리포트
-            </Link>
             <Link href="/quests" className="text-sm font-medium hover:text-blue-600">
               퀘스트
             </Link>
-            <Link href="/ranking" className="text-sm font-medium hover:text-blue-600">
-              랭킹
+            <Link href="/teams" className="text-sm font-medium hover:text-blue-600">
+              팀
             </Link>
           </nav>
           <div className="flex items-center gap-2">
