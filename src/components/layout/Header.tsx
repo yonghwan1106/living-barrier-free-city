@@ -16,11 +16,20 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <MapPin className="h-6 w-6 text-blue-600" />
-          <span className="text-xl font-bold">배리어프리 경기</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-bold leading-tight">배리어프리 경기</span>
+            <span className="text-[10px] text-gray-500 font-medium leading-tight">Living Barrier-Free City</span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
+          <Link href="/about" className="text-sm font-medium hover:text-blue-600 transition-colors">
+            소개
+          </Link>
+          <Link href="/guide" className="text-sm font-medium hover:text-blue-600 transition-colors">
+            매뉴얼
+          </Link>
           <Link href="/map" className="text-sm font-medium hover:text-blue-600 transition-colors">
             지도
           </Link>
@@ -82,6 +91,20 @@ export function Header() {
       {isMenuOpen && (
         <div className="md:hidden border-t bg-white">
           <nav className="container px-4 py-4 flex flex-col gap-3">
+            <Link
+              href="/about"
+              className="text-sm font-medium hover:text-blue-600 py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              소개
+            </Link>
+            <Link
+              href="/guide"
+              className="text-sm font-medium hover:text-blue-600 py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              매뉴얼
+            </Link>
             <Link
               href="/map"
               className="text-sm font-medium hover:text-blue-600 py-2"

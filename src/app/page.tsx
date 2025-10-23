@@ -38,28 +38,64 @@ export default async function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center px-4 py-24 text-center bg-gradient-to-b from-blue-50 via-white to-white">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="mx-auto max-w-4xl space-y-6 relative z-10">
-          <div className="inline-block mb-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+      <section className="relative flex flex-col items-center justify-center px-4 py-32 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+
+        {/* Animated background elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+
+        <div className="mx-auto max-w-5xl space-y-8 relative z-10 text-white">
+          <div className="inline-block mb-4 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold shadow-lg">
             2025 경기도 장애인 인권정책 공모전 출품작
           </div>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl animate-fade-in">
+
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl leading-tight">
             시민이 만드는
             <br />
-            <span className="text-blue-600 bg-clip-text">살아있는 무장애 도시</span>
+            <span className="bg-gradient-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent">
+              살아있는 무장애 도시
+            </span>
           </h1>
-          <p className="mx-auto max-w-2xl text-lg text-gray-600">
+
+          <p className="text-xl font-semibold text-blue-100 mb-2">
+            Living Barrier-Free City
+          </p>
+
+          <p className="mx-auto max-w-3xl text-xl text-blue-50 leading-relaxed">
             경기도 전역의 물리적 장벽을 실시간으로 파악하고 개선하는
-            <br />
+            <br className="hidden sm:block" />
             시민 참여형 접근성 데이터 생태계
           </p>
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button size="lg" asChild className="shadow-lg hover:shadow-xl transition-shadow">
-              <Link href="/auth/signin">지금 시작하기</Link>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center pt-4">
+            <Button
+              size="lg"
+              asChild
+              className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl transition-all text-lg px-8 py-6 hover:scale-105"
+            >
+              <Link href="/auth/signin">
+                <MapPin className="mr-2 h-5 w-5" />
+                지금 시작하기
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="hover:bg-blue-50 transition-colors">
+            <Button
+              size="lg"
+              variant="outline"
+              asChild
+              className="bg-transparent text-white border-2 border-white hover:bg-white hover:text-blue-600 transition-all text-lg px-8 py-6 hover:scale-105"
+            >
               <Link href="/map">지도 둘러보기</Link>
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              asChild
+              className="bg-transparent text-white border-2 border-white hover:bg-white hover:text-purple-600 transition-all text-lg px-8 py-6 hover:scale-105"
+            >
+              <Link href="/about">소개 보기</Link>
             </Button>
           </div>
         </div>
