@@ -32,16 +32,79 @@ const DEMO_USERS = [
   },
 ];
 
-// Sample report locations in 경기도
+// Sample report locations in 경기도 (확장된 50+ 위치)
 const SAMPLE_LOCATIONS = [
-  { lat: 37.4563, lng: 126.7052, address: '경기 부천시 원미구 중동로 198', city: '부천시' },
+  // 수원시 (10개)
   { lat: 37.2636, lng: 127.0286, address: '경기 수원시 팔달구 정조로 825', city: '수원시' },
+  { lat: 37.2795, lng: 127.0176, address: '경기 수원시 장안구 경수대로 893', city: '수원시' },
+  { lat: 37.2571, lng: 127.0007, address: '경기 수원시 권선구 세류로 180', city: '수원시' },
+  { lat: 37.2981, lng: 127.0553, address: '경기 수원시 영통구 광교로 107', city: '수원시' },
+  { lat: 37.2663, lng: 127.0354, address: '경기 수원시 팔달구 수원천로 392', city: '수원시' },
+  { lat: 37.2883, lng: 127.0391, address: '경기 수원시 장안구 송죽동 456', city: '수원시' },
+  { lat: 37.2514, lng: 127.0155, address: '경기 수원시 권선구 구운로 1', city: '수원시' },
+  { lat: 37.3012, lng: 127.0733, address: '경기 수원시 영통구 이의동 1325', city: '수원시' },
+  { lat: 37.2821, lng: 127.0099, address: '경기 수원시 장안구 조원동 775', city: '수원시' },
+  { lat: 37.2738, lng: 127.0447, address: '경기 수원시 팔달구 인계동 1117', city: '수원시' },
+
+  // 성남시 (8개)
+  { lat: 37.4138, lng: 127.1277, address: '경기 성남시 분당구 성남대로 801', city: '성남시' },
+  { lat: 37.4201, lng: 127.1276, address: '경기 성남시 분당구 황새울로 200', city: '성남시' },
+  { lat: 37.3894, lng: 127.1217, address: '경기 성남시 수정구 태평로 55', city: '성남시' },
+  { lat: 37.4335, lng: 127.1378, address: '경기 성남시 분당구 정자동 178', city: '성남시' },
+  { lat: 37.4491, lng: 127.1458, address: '경기 성남시 분당구 백현동 541', city: '성남시' },
+  { lat: 37.3782, lng: 127.1145, address: '경기 성남시 중원구 성남대로 997', city: '성남시' },
+  { lat: 37.4423, lng: 127.1175, address: '경기 성남시 분당구 서현동 256', city: '성남시' },
+  { lat: 37.3987, lng: 127.1063, address: '경기 성남시 수정구 신흥동 3378', city: '성남시' },
+
+  // 고양시 (7개)
+  { lat: 37.6584, lng: 126.8320, address: '경기 고양시 덕양구 화정로 82', city: '고양시' },
+  { lat: 37.6395, lng: 126.8326, address: '경기 고양시 일산동구 중앙로 1261', city: '고양시' },
+  { lat: 37.6682, lng: 126.7778, address: '경기 고양시 일산서구 주엽동 75', city: '고양시' },
+  { lat: 37.6913, lng: 126.8354, address: '경기 고양시 일산동구 장항동 869', city: '고양시' },
+  { lat: 37.6246, lng: 126.9162, address: '경기 고양시 덕양구 원흥동 633', city: '고양시' },
+  { lat: 37.6557, lng: 126.7682, address: '경기 고양시 일산서구 탄현동 1548', city: '고양시' },
+  { lat: 37.6729, lng: 126.8456, address: '경기 고양시 일산동구 백석동 1256', city: '고양시' },
+
+  // 부천시 (6개)
+  { lat: 37.4563, lng: 126.7052, address: '경기 부천시 원미구 중동로 198', city: '부천시' },
+  { lat: 37.5035, lng: 126.7660, address: '경기 부천시 소사구 경인로 736', city: '부천시' },
+  { lat: 37.4849, lng: 126.7831, address: '경기 부천시 원미구 상동 546', city: '부천시' },
+  { lat: 37.4981, lng: 126.7196, address: '경기 부천시 오정구 오정로 272', city: '부천시' },
+  { lat: 37.5134, lng: 126.7453, address: '경기 부천시 소사구 소사로 482', city: '부천시' },
+  { lat: 37.4891, lng: 126.7234, address: '경기 부천시 원미구 춘의동 192', city: '부천시' },
+
+  // 안산시 (5개)
+  { lat: 37.3219, lng: 126.8309, address: '경기 안산시 단원구 광덕대로 195', city: '안산시' },
+  { lat: 37.3064, lng: 126.8585, address: '경기 안산시 상록구 안산대학로 155', city: '안산시' },
+  { lat: 37.2914, lng: 126.8204, address: '경기 안산시 단원구 원곡동 847', city: '안산시' },
+  { lat: 37.3375, lng: 126.8572, address: '경기 안산시 상록구 본오동 701', city: '안산시' },
+  { lat: 37.3158, lng: 126.8413, address: '경기 안산시 단원구 고잔동 541', city: '안산시' },
+
+  // 용인시 (5개)
+  { lat: 37.2411, lng: 127.1776, address: '경기 용인시 기흥구 중부대로 242', city: '용인시' },
+  { lat: 37.2747, lng: 127.2093, address: '경기 용인시 수지구 풍덕천로 152', city: '용인시' },
+  { lat: 37.1919, lng: 127.0777, address: '경기 용인시 처인구 금학로 209', city: '용인시' },
+  { lat: 37.2574, lng: 127.1842, address: '경기 용인시 기흥구 신갈동 231', city: '용인시' },
+  { lat: 37.3012, lng: 127.2547, address: '경기 용인시 수지구 죽전동 1330', city: '용인시' },
+
+  // 남양주시 (4개)
+  { lat: 37.5383, lng: 127.2624, address: '경기 남양주시 다산중앙로 20길 25', city: '남양주시' },
+  { lat: 37.6360, lng: 127.2157, address: '경기 남양주시 진접읍 금강로 1095', city: '남양주시' },
+  { lat: 37.6152, lng: 127.0903, address: '경기 남양주시 별내동 192', city: '남양주시' },
+  { lat: 37.5891, lng: 127.2043, address: '경기 남양주시 화도읍 묵현리 356', city: '남양주시' },
+
+  // 화성시 (4개)
+  { lat: 37.1990, lng: 126.8312, address: '경기 화성시 봉담읍 동화길 37', city: '화성시' },
+  { lat: 37.2031, lng: 127.0017, address: '경기 화성시 동탄대로 636', city: '화성시' },
+  { lat: 37.2225, lng: 126.9841, address: '경기 화성시 병점중앙로 140', city: '화성시' },
+  { lat: 37.1564, lng: 126.7012, address: '경기 화성시 향남읍 토성로 123', city: '화성시' },
+
+  // 기타 도시들
   { lat: 37.6543, lng: 127.0618, address: '경기 의정부시 평화로 525', city: '의정부시' },
   { lat: 37.3895, lng: 126.9504, address: '경기 안양시 만안구 문화광장로 36', city: '안양시' },
-  { lat: 37.5383, lng: 127.2624, address: '경기 남양주시 다산중앙로 20길 25', city: '남양주시' },
   { lat: 37.3414, lng: 126.7333, address: '경기 시흥시 중심상가로 59', city: '시흥시' },
-  { lat: 37.4138, lng: 127.1277, address: '경기 성남시 분당구 성남대로 801', city: '성남시' },
-  { lat: 37.6584, lng: 126.8320, address: '경기 고양시 덕양구 화정로 82', city: '고양시' },
+  { lat: 37.4517, lng: 126.9827, address: '경기 광명시 오리로 613', city: '광명시' },
+  { lat: 37.7490, lng: 127.0474, address: '경기 의정부시 의정부동 234', city: '의정부시' },
 ];
 
 // Sample barrier categories and descriptions
@@ -107,7 +170,7 @@ export async function POST() {
     // Create sample reports for each user
     for (let i = 0; i < createdUsers.length; i++) {
       const user = createdUsers[i];
-      const numReports = 5 + Math.floor(Math.random() * 8); // 5-12 reports per user
+      const numReports = 15 + Math.floor(Math.random() * 10); // 15-24 reports per user (총 45-72개)
 
       for (let j = 0; j < numReports; j++) {
         const isBarrier = Math.random() > 0.3; // 70% barriers, 30% praise
