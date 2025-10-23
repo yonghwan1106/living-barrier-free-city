@@ -171,12 +171,24 @@ export async function POST() {
     const teamValues = await objectToValues(SHEET_NAMES.TEAMS, demoTeam as unknown as Record<string, unknown>);
     await appendRow(SHEET_NAMES.TEAMS, teamValues);
 
+    // Create sample quests by calling the quest init endpoint
+    try {
+      await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/quests/init-sample`, {
+        method: 'POST',
+      });
+      console.log('Sample quests created');
+    } catch (questError) {
+      console.error('Error creating sample quests:', questError);
+      // Continue even if quest creation fails
+    }
+
     return NextResponse.json({
       message: '데모 데이터 생성 완료',
       data: {
         users: createdUsers.length,
         reports: createdReports.length,
         teams: 1,
+        quests: 'initialized',
       },
     });
   } catch (error) {
