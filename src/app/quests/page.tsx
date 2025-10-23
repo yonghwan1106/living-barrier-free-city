@@ -139,61 +139,86 @@ export default function QuestsPage() {
     const isClaimed = quest.user_claimed || false;
 
     return (
-      <Card key={quest.quest_id} className={`p-4 ${isClaimed ? 'opacity-60' : ''}`}>
-        <div className="flex items-start gap-3">
-          <div className={`p-2 rounded-lg ${getQuestColor(quest.type)} text-white`}>
+      <Card
+        key={quest.quest_id}
+        className={`p-5 transition-all duration-300 hover:shadow-xl ${
+          isClaimed
+            ? 'opacity-60 bg-gray-50'
+            : isCompleted
+            ? 'border-2 border-green-500 shadow-lg'
+            : 'hover:scale-[1.02] hover:border-blue-200 border-2 border-transparent'
+        }`}
+      >
+        <div className="flex items-start gap-4">
+          <div className={`p-3 rounded-xl ${getQuestColor(quest.type)} text-white shadow-md`}>
             {getQuestIcon(quest.type)}
           </div>
           <div className="flex-1">
-            <h3 className="font-bold mb-1">{quest.title}</h3>
-            <p className="text-sm text-gray-600 mb-3">{quest.description}</p>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-bold text-lg">{quest.title}</h3>
+              {isCompleted && !isClaimed && (
+                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full animate-pulse">
+                  완료!
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-gray-600 mb-4">{quest.description}</p>
 
             {/* Progress Bar */}
-            <div className="mb-3">
-              <div className="flex justify-between text-xs text-gray-500 mb-1">
+            <div className="mb-4">
+              <div className="flex justify-between text-xs font-semibold text-gray-600 mb-2">
                 <span>진행도</span>
-                <span>{progress} / {quest.target_count}</span>
+                <span className="text-blue-600">{progress} / {quest.target_count}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner overflow-hidden">
                 <div
-                  className={`h-2 rounded-full transition-all ${getQuestColor(quest.type)}`}
+                  className={`h-3 rounded-full transition-all duration-500 ${getQuestColor(quest.type)} ${
+                    isCompleted ? 'animate-pulse' : ''
+                  }`}
                   style={{ width: `${progressPercentage}%` }}
                 ></div>
+              </div>
+              <div className="text-xs text-gray-500 mt-1 text-right">
+                {progressPercentage.toFixed(0)}% 완료
               </div>
             </div>
 
             {/* Rewards */}
-            <div className="flex items-center gap-4 text-sm mb-3">
-              <div className="flex items-center gap-1 text-blue-600">
-                <Zap className="h-4 w-4" />
-                <span className="font-semibold">+{quest.xp_reward} XP</span>
+            <div className="flex items-center gap-4 text-sm mb-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+              <div className="flex items-center gap-2 text-blue-700">
+                <Zap className="h-5 w-5" />
+                <span className="font-bold">+{quest.xp_reward} XP</span>
               </div>
               {quest.point_reward && quest.point_reward > 0 && (
-                <div className="flex items-center gap-1 text-yellow-600">
-                  <Trophy className="h-4 w-4" />
-                  <span className="font-semibold">+{quest.point_reward} P</span>
+                <div className="flex items-center gap-2 text-yellow-700">
+                  <Trophy className="h-5 w-5" />
+                  <span className="font-bold">+{quest.point_reward} P</span>
                 </div>
               )}
             </div>
 
             {/* Action Button */}
             {isClaimed ? (
-              <div className="flex items-center gap-2 text-green-600 text-sm">
-                <CheckCircle className="h-4 w-4" />
-                <span className="font-semibold">보상 획득 완료</span>
+              <div className="flex items-center justify-center gap-2 text-green-600 text-sm py-2 bg-green-50 rounded-lg">
+                <CheckCircle className="h-5 w-5" />
+                <span className="font-bold">보상 획득 완료</span>
               </div>
             ) : isCompleted ? (
               <Button
-                size="sm"
-                className="w-full bg-green-600 hover:bg-green-700"
+                size="lg"
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all"
                 onClick={() => handleClaimReward(quest.quest_id)}
               >
+                <Trophy className="h-5 w-5 mr-2" />
                 보상 받기
               </Button>
             ) : (
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 text-center py-2 bg-gray-100 rounded-lg">
                 {quest.end_date && (
-                  <div>마감: {new Date(quest.end_date).toLocaleDateString('ko-KR')}</div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    마감: {new Date(quest.end_date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
+                  </div>
                 )}
               </div>
             )}
@@ -210,13 +235,36 @@ export default function QuestsPage() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* User Info */}
-        <Card className="p-4 mb-6">
+        <Card className="p-6 mb-8 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white shadow-2xl">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-bold text-lg">{session.user?.nickname || session.user?.name}</h2>
-              <p className="text-sm text-gray-600">레벨 {session.user?.level || 1} · {session.user?.xp || 0} XP</p>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="font-bold text-2xl">{session.user?.nickname || session.user?.name}</h2>
+                <Trophy className="h-6 w-6 text-yellow-300 animate-pulse" />
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+                  <p className="text-sm font-bold">레벨 {session.user?.level || 1}</p>
+                </div>
+                <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+                  <p className="text-sm font-bold">{session.user?.xp || 0} XP</p>
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="text-xs mb-1">다음 레벨까지</div>
+                <div className="w-full bg-white/30 rounded-full h-2">
+                  <div
+                    className="h-2 rounded-full bg-yellow-400"
+                    style={{ width: `${((session.user?.xp || 0) % 100)}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
-            <Trophy className="h-10 w-10 text-yellow-500" />
+            <div className="hidden sm:block">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-4">
+                <Trophy className="h-12 w-12 text-yellow-300" />
+              </div>
+            </div>
           </div>
         </Card>
 

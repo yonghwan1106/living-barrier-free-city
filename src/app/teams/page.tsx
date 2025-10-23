@@ -178,26 +178,29 @@ export default function TeamsPage() {
               <Users className="h-5 w-5 text-blue-600" />
               내 팀
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {myTeams.map((team) => (
-                <Card key={team.team_id} className="p-4">
+                <Card key={team.team_id} className="p-6 transition-all hover:shadow-xl hover:scale-[1.02] border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-bold">{team.name}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-bold text-xl text-blue-900">{team.name}</h3>
                         {team.leader_id === session.user?.id && (
-                          <Crown className="h-4 w-4 text-yellow-500" />
+                          <div className="px-2 py-1 bg-yellow-100 rounded-full flex items-center gap-1">
+                            <Crown className="h-4 w-4 text-yellow-600" />
+                            <span className="text-xs font-bold text-yellow-700">리더</span>
+                          </div>
                         )}
                       </div>
                       {team.description && (
-                        <p className="text-sm text-gray-600 mb-2">{team.description}</p>
+                        <p className="text-sm text-gray-700 mb-3">{team.description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          <span>{team.member_ids?.length || 0}명</span>
+                      <div className="flex items-center gap-6 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 px-3 py-1 bg-white rounded-full shadow-sm">
+                          <Users className="h-4 w-4 text-blue-600" />
+                          <span className="font-semibold">{team.member_ids?.length || 0}명</span>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2 px-3 py-1 bg-white rounded-full shadow-sm">
                           <TrendingUp className="h-4 w-4" />
                           <span>레벨 {team.level}</span>
                         </div>

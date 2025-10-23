@@ -1,10 +1,37 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MapPin, Users, Award, TrendingUp } from "lucide-react";
+import { MapPin, Users, Award, TrendingUp, CheckCircle2 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 
-export default function Home() {
+async function getStats() {
+  try {
+    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/reports`, {
+      cache: 'no-store',
+    });
+    if (response.ok) {
+      const { data } = await response.json();
+      return {
+        totalReports: data.length,
+        resolvedBarriers: data.filter((r: { status: string }) => r.status === 'resolved').length,
+        activeUsers: 3,
+        coverage: Math.min(Math.round((data.length / 100) * 100), 100),
+      };
+    }
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+  }
+
+  return {
+    totalReports: 0,
+    activeUsers: 0,
+    resolvedBarriers: 0,
+    coverage: 0,
+  };
+}
+
+export default async function Home() {
+  const stats = await getStats();
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header */}
@@ -41,25 +68,29 @@ export default function Home() {
       {/* Stats Section */}
       <section className="border-y bg-gradient-to-r from-blue-50 to-indigo-50 py-16">
         <div className="container grid gap-6 px-4 md:grid-cols-4">
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow bg-white">
-            <TrendingUp className="h-12 w-12 text-blue-600 mx-auto mb-3" />
-            <div className="text-4xl font-bold text-blue-600 mb-2">10,000+</div>
+          <Card className="text-center p-6 hover:shadow-lg transition-all hover:scale-105 bg-white border-2 hover:border-blue-200">
+            <TrendingUp className="h-12 w-12 text-blue-600 mx-auto mb-3 animate-pulse" />
+            <div className="text-4xl font-bold text-blue-600 mb-2">{stats.totalReports}+</div>
             <div className="text-sm text-gray-600 font-medium">총 리포트</div>
+            <div className="text-xs text-gray-500 mt-1">실시간 데이터</div>
           </Card>
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow bg-white">
+          <Card className="text-center p-6 hover:shadow-lg transition-all hover:scale-105 bg-white border-2 hover:border-green-200">
             <Users className="h-12 w-12 text-green-600 mx-auto mb-3" />
-            <div className="text-4xl font-bold text-green-600 mb-2">1,000+</div>
+            <div className="text-4xl font-bold text-green-600 mb-2">{stats.activeUsers}</div>
             <div className="text-sm text-gray-600 font-medium">활성 사용자</div>
+            <div className="text-xs text-gray-500 mt-1">데모 계정</div>
           </Card>
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow bg-white">
+          <Card className="text-center p-6 hover:shadow-lg transition-all hover:scale-105 bg-white border-2 hover:border-purple-200">
             <MapPin className="h-12 w-12 text-purple-600 mx-auto mb-3" />
-            <div className="text-4xl font-bold text-purple-600 mb-2">70%</div>
-            <div className="text-sm text-gray-600 font-medium">주요 시설 커버리지</div>
+            <div className="text-4xl font-bold text-purple-600 mb-2">{stats.coverage}%</div>
+            <div className="text-sm text-gray-600 font-medium">경기도 커버리지</div>
+            <div className="text-xs text-gray-500 mt-1">12개 도시</div>
           </Card>
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow bg-white">
-            <Award className="h-12 w-12 text-orange-600 mx-auto mb-3" />
-            <div className="text-4xl font-bold text-orange-600 mb-2">500+</div>
+          <Card className="text-center p-6 hover:shadow-lg transition-all hover:scale-105 bg-white border-2 hover:border-orange-200">
+            <CheckCircle2 className="h-12 w-12 text-orange-600 mx-auto mb-3" />
+            <div className="text-4xl font-bold text-orange-600 mb-2">{stats.resolvedBarriers}</div>
             <div className="text-sm text-gray-600 font-medium">해결된 장벽</div>
+            <div className="text-xs text-green-600 mt-1 font-semibold">+{Math.round((stats.resolvedBarriers / stats.totalReports) * 100)}% 해결률</div>
           </Card>
         </div>
       </section>
