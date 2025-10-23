@@ -28,7 +28,7 @@ export default function MapPage() {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showBarriers, setShowBarriers] = useState(true);
   const [showPraise, setShowPraise] = useState(true);
-  const [showResolved, setShowResolved] = useState(false);
+  const [showResolved, setShowResolved] = useState(true);
 
   const fetchReports = useCallback(async () => {
     try {
