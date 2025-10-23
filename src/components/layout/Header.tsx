@@ -58,7 +58,7 @@ export function Header() {
                 variant="ghost"
                 size="sm"
                 onClick={() => signOut({ callbackUrl: '/' })}
-                className="gap-2"
+                className="gap-2 hover:text-blue-600 hover:bg-blue-50 transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 로그아웃
@@ -144,7 +144,7 @@ export function Header() {
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full gap-2"
+                    className="w-full gap-2 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                     onClick={() => {
                       setIsMenuOpen(false);
                       signOut({ callbackUrl: '/' });
