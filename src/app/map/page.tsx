@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { NaverMap } from '@/components/map/NaverMap';
 import { ReportMarkers } from '@/components/map/ReportMarkers';
@@ -25,7 +25,7 @@ import type { Report } from '@/types';
 
 export default function MapPage() {
   const { data: session } = useSession();
-  const [map, setMap] = useState<any>(null);
+  const [map, setMap] = useState<NaverMap | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,12 +35,7 @@ export default function MapPage() {
   const [showPraise, setShowPraise] = useState(true);
   const [showResolved, setShowResolved] = useState(false);
 
-  // 리포트 데이터 가져오기
-  useEffect(() => {
-    fetchReports();
-  }, []);
-
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     try {
       const response = await fetch('/api/reports');
       if (response.ok) {
@@ -50,7 +45,12 @@ export default function MapPage() {
     } catch (error) {
       console.error('Error fetching reports:', error);
     }
-  };
+  }, []);
+
+  // 리포트 데이터 가져오기
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
   // 필터링된 리포트
   const filteredReports = reports.filter((report) => {
@@ -61,7 +61,7 @@ export default function MapPage() {
     return true;
   });
 
-  const handleMapLoad = (mapInstance: any) => {
+  const handleMapLoad = (mapInstance: NaverMap) => {
     setMap(mapInstance);
     console.log('Map loaded:', mapInstance);
   };
@@ -73,6 +73,8 @@ export default function MapPage() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { naver } = window;
+          if (!naver?.maps) return;
+
           const location = new naver.maps.LatLng(
             position.coords.latitude,
             position.coords.longitude

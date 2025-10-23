@@ -3,7 +3,7 @@ import { getGoogleSheetsClient, SPREADSHEET_ID } from './client';
 /**
  * 시트에 데이터 추가
  */
-export async function appendRow(sheetName: string, values: any[]) {
+export async function appendRow(sheetName: string, values: unknown[]) {
   const sheets = getGoogleSheetsClient();
 
   if (!SPREADSHEET_ID) {
@@ -55,7 +55,7 @@ export async function getAllRows(sheetName: string) {
 
     // 헤더를 키로 하는 객체 배열로 변환
     return data.map((row) => {
-      const obj: any = {};
+      const obj: Record<string, unknown> = {};
       headers.forEach((header, index) => {
         const value = row[index];
 
@@ -79,7 +79,7 @@ export async function getAllRows(sheetName: string) {
  */
 export async function findRows(
   sheetName: string,
-  predicate: (row: any) => boolean
+  predicate: (row: Record<string, unknown>) => boolean
 ) {
   const allRows = await getAllRows(sheetName);
   return allRows.filter(predicate);
@@ -91,7 +91,7 @@ export async function findRows(
 export async function updateRow(
   sheetName: string,
   rowIndex: number,
-  values: any[]
+  values: unknown[]
 ) {
   const sheets = getGoogleSheetsClient();
 
@@ -126,7 +126,7 @@ export async function updateRowById(
   sheetName: string,
   idColumnName: string,
   id: string,
-  updatedData: Record<string, any>
+  updatedData: Record<string, unknown>
 ) {
   const allRows = await getAllRows(sheetName);
   const rowIndex = allRows.findIndex((row) => row[idColumnName] === id);
@@ -229,8 +229,8 @@ export async function deleteRowById(
  */
 export async function objectToValues(
   sheetName: string,
-  obj: Record<string, any>
-): Promise<any[]> {
+  obj: Record<string, unknown>
+): Promise<unknown[]> {
   const sheets = getGoogleSheetsClient();
 
   const response = await sheets.spreadsheets.values.get({

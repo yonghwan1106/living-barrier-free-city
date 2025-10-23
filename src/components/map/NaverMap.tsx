@@ -7,7 +7,7 @@ interface NaverMapProps {
   center?: { lat: number; lng: number };
   zoom?: number;
   className?: string;
-  onMapLoad?: (map: any) => void;
+  onMapLoad?: (map: NaverMap) => void;
 }
 
 export function NaverMap({
@@ -17,7 +17,7 @@ export function NaverMap({
   onMapLoad,
 }: NaverMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<NaverMap | null>(null);
   const { isLoaded, error } = useNaverMaps();
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
 

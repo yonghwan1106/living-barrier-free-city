@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import type { Report } from '@/types';
 
 interface ReportMarkersProps {
-  map: any;
+  map: NaverMap;
   reports: Report[];
   onMarkerClick?: (report: Report) => void;
 }
 
 export function ReportMarkers({ map, reports, onMarkerClick }: ReportMarkersProps) {
-  const [markers, setMarkers] = useState<any[]>([]);
+  const [markers, setMarkers] = useState<NaverMarker[]>([]);
 
   useEffect(() => {
     if (!map || !window.naver) return;
@@ -19,7 +19,7 @@ export function ReportMarkers({ map, reports, onMarkerClick }: ReportMarkersProp
     markers.forEach((marker) => marker.setMap(null));
 
     const { naver } = window;
-    const newMarkers: any[] = [];
+    const newMarkers: NaverMarker[] = [];
 
     // 각 리포트에 대해 마커 생성
     reports.forEach((report) => {

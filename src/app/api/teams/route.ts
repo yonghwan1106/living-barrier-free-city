@@ -19,24 +19,26 @@ export async function GET(request: NextRequest) {
 
     // 사용자의 팀만 필터링
     if (user_id) {
-      teams = teams.filter((team: Team) =>
-        team.member_ids && team.member_ids.includes(user_id)
-      );
+      teams = teams.filter((team) => {
+        const memberIds = Array.isArray(team.member_ids) ? team.member_ids : [];
+        return memberIds.includes(user_id);
+      });
     }
 
     // 검색어로 필터링
     if (search) {
       const searchLower = search.toLowerCase();
-      teams = teams.filter((team: Team) =>
-        team.name.toLowerCase().includes(searchLower) ||
-        team.description?.toLowerCase().includes(searchLower)
-      );
+      teams = teams.filter((team) => {
+        const name = String(team.name || '').toLowerCase();
+        const description = String(team.description || '').toLowerCase();
+        return name.includes(searchLower) || description.includes(searchLower);
+      });
     }
 
     // 팀 정렬 (멤버 수 기준)
-    teams.sort((a: Team, b: Team) => {
-      const aMembers = a.member_ids?.length || 0;
-      const bMembers = b.member_ids?.length || 0;
+    teams.sort((a, b) => {
+      const aMembers = Array.isArray(a.member_ids) ? a.member_ids.length : 0;
+      const bMembers = Array.isArray(b.member_ids) ? b.member_ids.length : 0;
       return bMembers - aMembers;
     });
 
@@ -88,7 +90,7 @@ export async function POST(request: NextRequest) {
     // 중복 팀명 확인
     const existingTeams = await findRows(
       SHEET_NAMES.TEAMS,
-      (row) => row.name.toLowerCase() === name.toLowerCase().trim()
+      (row) => String(row.name || '').toLowerCase() === name.toLowerCase().trim()
     );
 
     if (existingTeams.length > 0) {
@@ -111,7 +113,7 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString(),
     };
 
-    const values = await objectToValues(SHEET_NAMES.TEAMS, newTeam);
+    const values = await objectToValues(SHEET_NAMES.TEAMS, newTeam as unknown as Record<string, unknown>);
     await appendRow(SHEET_NAMES.TEAMS, values);
 
     return NextResponse.json({

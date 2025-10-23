@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 퀘스트 완료 여부 확인
-    if (!userQuest.completed || userQuest.progress < quest.target_count) {
+    if (!userQuest.completed || Number(userQuest.progress) < Number(quest.target_count)) {
       return NextResponse.json(
         { error: 'Quest not completed yet' },
         { status: 400 }
@@ -97,7 +97,9 @@ export async function POST(request: NextRequest) {
     }
 
     const user = users[0];
-    const newXP = (user.xp || 0) + quest.xp_reward;
+    const xpReward = Number(quest.xp_reward || 0);
+    const pointReward = Number(quest.point_reward || 0);
+    const newXP = Number(user.xp || 0) + xpReward;
     const newLevel = Math.floor(newXP / 100) + 1;
 
     await updateRowById(SHEET_NAMES.USERS, 'user_id', session.user.id, {
@@ -106,7 +108,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 사용자 퀘스트 상태 업데이트
-    await updateRowById(SHEET_NAMES.USER_QUESTS, 'user_quest_id', userQuest.user_quest_id, {
+    await updateRowById(SHEET_NAMES.USER_QUESTS, 'user_quest_id', String(userQuest.user_quest_id), {
       claimed: true,
       claimed_at: new Date().toISOString(),
     });
@@ -115,8 +117,8 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Quest rewards claimed successfully',
       rewards: {
-        xp: quest.xp_reward,
-        point: quest.point_reward || 0,
+        xp: xpReward,
+        point: pointReward,
         new_xp: newXP,
         new_level: newLevel,
       },

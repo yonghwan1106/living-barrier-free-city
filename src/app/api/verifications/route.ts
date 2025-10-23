@@ -75,17 +75,18 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    const values = await objectToValues(SHEET_NAMES.VERIFICATIONS, newVerification);
+    const values = await objectToValues(SHEET_NAMES.VERIFICATIONS, newVerification as unknown as Record<string, unknown>);
     await appendRow(SHEET_NAMES.VERIFICATIONS, values);
 
     // 리포트 업데이트
-    const updates: any = {};
+    const updates: Record<string, unknown> = {};
 
     if (type === 'confirm') {
       // verify_count 증가
-      updates.verify_count = (report.verify_count || 0) + 1;
+      const verifyCount = Number(report.verify_count || 0) + 1;
+      updates.verify_count = verifyCount;
       // confidence_score 증가 (간단한 계산: 검증 수 * 10, 최대 100)
-      updates.confidence_score = Math.min(100, updates.verify_count * 10);
+      updates.confidence_score = Math.min(100, verifyCount * 10);
     } else if (type === 'resolved') {
       // 상태를 resolved로 변경
       updates.status = 'resolved';
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
       updates.resolved_by = session.user.id;
     }
 
-    await updateRowById(SHEET_NAMES.REPORTS, 'report_id', report_id, updates);
+    await updateRowById(SHEET_NAMES.REPORTS, 'report_id', String(report_id), updates);
 
     // 검증한 사용자에게 XP 부여 (5 XP)
     const users = await findRows(
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (users.length > 0) {
-      const currentXP = users[0].xp || 0;
+      const currentXP = Number(users[0].xp || 0);
       const newXP = currentXP + 5;
       const newLevel = Math.floor(newXP / 100) + 1;
 

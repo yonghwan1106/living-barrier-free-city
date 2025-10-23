@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { v4 as uuidv4 } from 'uuid';
-import { getAllRows, findRows, appendRow, objectToValues, updateRowById } from '@/lib/google-sheets/operations';
+import { getAllRows, findRows, appendRow, objectToValues } from '@/lib/google-sheets/operations';
 import { SHEET_NAMES } from '@/lib/google-sheets/client';
-import type { Quest } from '@/types';
+import type { Quest, UserQuest } from '@/types';
 
 /**
  * GET /api/quests
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     // 모든 활성 퀘스트 가져오기
     const allQuests = await getAllRows(SHEET_NAMES.QUESTS);
-    const activeQuests = allQuests.filter((q: Quest) => q.status === 'active');
+    const activeQuests = allQuests.filter((q) => q.status === 'active');
 
     // 사용자가 로그인한 경우 진행 상황 추가
     if (session?.user?.id) {
@@ -25,13 +25,13 @@ export async function GET(request: NextRequest) {
       );
 
       // 퀘스트에 사용자 진행 상황 매핑
-      const questsWithProgress = activeQuests.map((quest: Quest) => {
-        const userQuest = userQuests.find((uq: any) => uq.quest_id === quest.quest_id);
+      const questsWithProgress = activeQuests.map((quest) => {
+        const userQuest = userQuests.find((uq) => uq.quest_id === quest.quest_id);
         return {
           ...quest,
           user_progress: userQuest?.progress || 0,
-          user_completed: userQuest?.completed || false,
-          user_claimed: userQuest?.claimed || false,
+          user_completed: userQuest?.is_completed || false,
+          user_claimed: userQuest?.claimed_reward || false,
         };
       });
 
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    const values = await objectToValues(SHEET_NAMES.QUESTS, newQuest);
+    const values = await objectToValues(SHEET_NAMES.QUESTS, newQuest as unknown as Record<string, unknown>);
     await appendRow(SHEET_NAMES.QUESTS, values);
 
     return NextResponse.json({

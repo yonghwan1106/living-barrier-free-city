@@ -50,10 +50,3 @@ export function useNaverMaps() {
 
   return { isLoaded, error };
 }
-
-// Naver Maps 타입 선언
-declare global {
-  interface Window {
-    naver: any;
-  }
-}

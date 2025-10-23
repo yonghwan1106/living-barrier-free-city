@@ -138,7 +138,7 @@ export async function POST() {
 
     // 퀘스트 추가
     for (const quest of sampleQuests) {
-      const values = await objectToValues(SHEET_NAMES.QUESTS, quest);
+      const values = await objectToValues(SHEET_NAMES.QUESTS, quest as unknown as Record<string, unknown>);
       await appendRow(SHEET_NAMES.QUESTS, values);
     }
 

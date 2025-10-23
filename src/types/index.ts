@@ -97,17 +97,20 @@ export interface Verification {
 
 // Quest Types
 export type QuestType = 'daily' | 'weekly' | 'special';
+export type QuestStatus = 'active' | 'inactive' | 'expired';
 
 export interface Quest {
   quest_id: string;
   type: QuestType;
   title: string;
   description: string;
-  requirement: QuestRequirement;
-  reward_xp: number;
+  target_count: number;
+  xp_reward: number;
+  point_reward?: number;
   start_date?: string;
   end_date?: string;
-  is_active: boolean;
+  status: QuestStatus;
+  created_at: string;
 }
 
 export interface QuestRequirement {
@@ -138,9 +141,12 @@ export interface Team {
   name: string;
   description: string;
   leader_id: string;
-  members: string[];
+  member_ids: string[];
   total_xp: number;
+  level: number;
+  is_public: boolean;
   created_at: string;
+  updated_at?: string;
 }
 
 // Notification Types

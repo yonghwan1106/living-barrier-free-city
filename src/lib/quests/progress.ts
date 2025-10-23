@@ -17,9 +17,9 @@ export async function updateQuestProgress(
     );
 
     // 액션에 해당하는 퀘스트 필터링
-    const relevantQuests = allQuests.filter((quest: any) => {
-      const desc = quest.description.toLowerCase();
-      const title = quest.title.toLowerCase();
+    const relevantQuests = allQuests.filter((quest: Record<string, unknown>) => {
+      const desc = String(quest.description || '').toLowerCase();
+      const title = String(quest.title || '').toLowerCase();
 
       switch (action) {
         case 'report_created':

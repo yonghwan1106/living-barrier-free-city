@@ -43,7 +43,8 @@ export async function POST(request: NextRequest) {
     const team = teams[0];
 
     // 이미 팀원인지 확인
-    if (team.member_ids && team.member_ids.includes(session.user.id)) {
+    const memberIds = Array.isArray(team.member_ids) ? team.member_ids as string[] : [];
+    if (memberIds.includes(session.user.id)) {
       return NextResponse.json(
         { error: 'You are already a member of this team' },
         { status: 400 }
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 멤버 추가
-    const updatedMemberIds = [...(team.member_ids || []), session.user.id];
+    const updatedMemberIds = [...memberIds, session.user.id];
 
     await updateRowById(SHEET_NAMES.TEAMS, 'team_id', team_id, {
       member_ids: updatedMemberIds,

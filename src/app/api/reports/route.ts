@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { appendRow, objectToValues, findRows, updateRowById } from '@/lib/google-sheets/operations';
 import { SHEET_NAMES } from '@/lib/google-sheets/client';
 import { updateQuestProgress } from '@/lib/quests/progress';
-import type { Report } from '@/types';
+import type { Report, ReportType, ReportStatus } from '@/types';
 
 export async function POST(request: Request) {
   try {
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     };
 
     // Google Sheets에 저장
-    const values = await objectToValues(SHEET_NAMES.REPORTS, newReport);
+    const values = await objectToValues(SHEET_NAMES.REPORTS, newReport as unknown as Record<string, unknown>);
     await appendRow(SHEET_NAMES.REPORTS, values);
 
     // XP 지급 (+10 XP for barrier, +15 XP for praise)
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     );
 
     if (users.length > 0) {
-      const currentXP = users[0].xp || 0;
+      const currentXP = Number(users[0].xp || 0);
       const newXP = currentXP + xpReward;
       const newLevel = Math.floor(newXP / 100) + 1;
 
@@ -122,11 +122,11 @@ export async function GET(request: Request) {
     let filteredReports = allReports;
 
     if (type) {
-      filteredReports = filteredReports.filter((r: any) => r.type === type);
+      filteredReports = filteredReports.filter((r) => r.type === type as ReportType);
     }
 
     if (status) {
-      filteredReports = filteredReports.filter((r: any) => r.status === status);
+      filteredReports = filteredReports.filter((r) => r.status === status as ReportStatus);
     }
 
     // Bounds 필터링 (지도 영역 내 리포트만)
@@ -137,7 +137,7 @@ export async function GET(request: Request) {
       const minLng = Math.min(lng1, lng2);
       const maxLng = Math.max(lng1, lng2);
 
-      filteredReports = filteredReports.filter((r: any) => {
+      filteredReports = filteredReports.filter((r) => {
         const lat = Number(r.latitude);
         const lng = Number(r.longitude);
         return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
