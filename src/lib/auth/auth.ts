@@ -25,13 +25,16 @@ export const authConfig: NextAuthConfig = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (!user.email || !account) return false;
+      if (!account) return false;
+
+      // 카카오나 네이버의 경우 이메일이 없을 수 있음
+      const userEmail = user.email || `${account.provider}_${account.providerAccountId}@placeholder.local`;
 
       try {
         // Google Sheets에서 사용자 찾기
         const existingUsers = await findRows(
           SHEET_NAMES.USERS,
-          (row) => row.email === user.email
+          (row) => row.email === userEmail
         );
 
         const now = new Date().toISOString();
@@ -40,9 +43,9 @@ export const authConfig: NextAuthConfig = {
           // 신규 사용자 생성
           const newUser: User = {
             user_id: uuidv4(),
-            email: user.email,
+            email: userEmail,
             name: user.name || '',
-            nickname: user.name || 'User',
+            nickname: user.name || account.providerAccountId || 'User',
             provider: account.provider as 'google' | 'kakao' | 'naver',
             avatar_items: [],
             xp: 0,
@@ -58,11 +61,11 @@ export const authConfig: NextAuthConfig = {
           console.log('New user created:', newUser.user_id);
         } else {
           // 기존 사용자 last_login 업데이트
-          await updateRowById(SHEET_NAMES.USERS, 'email', user.email, {
+          await updateRowById(SHEET_NAMES.USERS, 'email', userEmail, {
             last_login: now,
           });
 
-          console.log('User login updated:', user.email);
+          console.log('User login updated:', userEmail);
         }
 
         return true;
