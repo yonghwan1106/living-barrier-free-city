@@ -30,7 +30,8 @@ export default function AdminDemoPage() {
       if (response.ok) {
         setResetResult(`성공: ${data.message || '데모 데이터 삭제 완료'}`);
       } else {
-        setResetResult(`실패: ${data.error || data.message || '알 수 없는 오류'}`);
+        const errorDetails = data.details ? `\n\n상세 오류:\n${data.details}` : '';
+        setResetResult(`실패: ${data.error || data.message || '알 수 없는 오류'}${errorDetails}`);
       }
     } catch (error) {
       setResetResult(`오류: ${error instanceof Error ? error.message : '네트워크 오류'}`);
@@ -58,7 +59,8 @@ export default function AdminDemoPage() {
           `- 팀: ${data.data?.teams || 0}개`
         );
       } else {
-        setInitResult(`실패: ${data.error || data.message || '알 수 없는 오류'}`);
+        const errorDetails = data.details ? `\n\n상세 오류:\n${data.details}` : '';
+        setInitResult(`실패: ${data.error || data.message || '알 수 없는 오류'}${errorDetails}`);
       }
     } catch (error) {
       setInitResult(`오류: ${error instanceof Error ? error.message : '네트워크 오류'}`);
@@ -105,10 +107,12 @@ export default function AdminDemoPage() {
             `- 팀: ${initData.data?.teams || 0}개`
           );
         } else {
-          setInitResult(`실패: ${initData.error || initData.message || '알 수 없는 오류'}`);
+          const errorDetails = initData.details ? `\n\n상세 오류:\n${initData.details}` : '';
+          setInitResult(`실패: ${initData.error || initData.message || '알 수 없는 오류'}${errorDetails}`);
         }
       } else {
-        setResetResult(`실패: ${resetData.error || resetData.message || '알 수 없는 오류'}`);
+        const errorDetails = resetData.details ? `\n\n상세 오류:\n${resetData.details}` : '';
+        setResetResult(`실패: ${resetData.error || resetData.message || '알 수 없는 오류'}${errorDetails}`);
       }
     } catch (error) {
       setResetResult(`오류: ${error instanceof Error ? error.message : '네트워크 오류'}`);

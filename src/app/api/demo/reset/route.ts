@@ -13,6 +13,22 @@ export async function POST() {
       throw new Error('SPREADSHEET_ID is not configured');
     }
 
+    // Get spreadsheet metadata to find actual sheet IDs
+    const spreadsheet = await sheets.spreadsheets.get({
+      spreadsheetId: SPREADSHEET_ID,
+    });
+
+    const sheetMap = new Map<string, number>();
+    spreadsheet.data.sheets?.forEach((sheet) => {
+      const title = sheet.properties?.title;
+      const sheetId = sheet.properties?.sheetId;
+      if (title && sheetId !== undefined && sheetId !== null) {
+        sheetMap.set(title, sheetId);
+      }
+    });
+
+    console.log('Sheet IDs:', Object.fromEntries(sheetMap));
+
     // Find all demo users
     const demoUsers = await findRows(
       SHEET_NAMES.USERS,
@@ -51,6 +67,11 @@ export async function POST() {
     });
 
     // Delete user rows (in reverse order to maintain indices)
+    const usersSheetId = sheetMap.get(SHEET_NAMES.USERS);
+    if (usersSheetId === undefined) {
+      throw new Error(`Sheet ${SHEET_NAMES.USERS} not found`);
+    }
+
     for (const rowIndex of deletedUserIndices.reverse()) {
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
@@ -59,7 +80,7 @@ export async function POST() {
             {
               deleteDimension: {
                 range: {
-                  sheetId: 0, // Users sheet ID
+                  sheetId: usersSheetId,
                   dimension: 'ROWS',
                   startIndex: rowIndex - 1,
                   endIndex: rowIndex,
@@ -88,6 +109,11 @@ export async function POST() {
       }
     });
 
+    const reportsSheetId = sheetMap.get(SHEET_NAMES.REPORTS);
+    if (reportsSheetId === undefined) {
+      throw new Error(`Sheet ${SHEET_NAMES.REPORTS} not found`);
+    }
+
     for (const rowIndex of deletedReportIndices.reverse()) {
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
@@ -96,7 +122,7 @@ export async function POST() {
             {
               deleteDimension: {
                 range: {
-                  sheetId: 1, // Reports sheet ID
+                  sheetId: reportsSheetId,
                   dimension: 'ROWS',
                   startIndex: rowIndex - 1,
                   endIndex: rowIndex,
@@ -125,6 +151,11 @@ export async function POST() {
       }
     });
 
+    const teamsSheetId = sheetMap.get(SHEET_NAMES.TEAMS);
+    if (teamsSheetId === undefined) {
+      throw new Error(`Sheet ${SHEET_NAMES.TEAMS} not found`);
+    }
+
     for (const rowIndex of deletedTeamIndices.reverse()) {
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
@@ -133,7 +164,7 @@ export async function POST() {
             {
               deleteDimension: {
                 range: {
-                  sheetId: 4, // Teams sheet ID (adjust if needed)
+                  sheetId: teamsSheetId,
                   dimension: 'ROWS',
                   startIndex: rowIndex - 1,
                   endIndex: rowIndex,
