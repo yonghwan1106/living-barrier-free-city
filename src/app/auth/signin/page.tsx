@@ -3,20 +3,53 @@
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Loader2 } from 'lucide-react';
+import { MapPin, Loader2, User, Trophy } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
+
+interface DemoAccount {
+  email: string;
+  name: string;
+  nickname: string;
+  level: number;
+  xp: number;
+}
 
 function SignInContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
   const error = searchParams.get('error');
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
+  const [demoAccounts, setDemoAccounts] = useState<DemoAccount[]>([]);
+  const [showDemoAccounts, setShowDemoAccounts] = useState(false);
+
+  // Fetch demo accounts
+  useEffect(() => {
+    fetch('/api/demo/accounts')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.accounts) {
+          setDemoAccounts(data.accounts);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch demo accounts:', err);
+      });
+  }, []);
 
   const handleSignIn = (provider: string) => {
     setLoadingProvider(provider);
     signIn(provider, { callbackUrl });
+  };
+
+  const handleDemoSignIn = (email: string) => {
+    setLoadingProvider(email);
+    signIn('demo', {
+      email,
+      callbackUrl,
+      redirect: true,
+    });
   };
 
   return (
@@ -143,6 +176,57 @@ function SignInContent() {
         >
           로그인 없이 둘러보기
         </Button>
+
+        {/* Demo Accounts Section */}
+        {demoAccounts.length > 0 && (
+          <div className="space-y-3">
+            <Button
+              onClick={() => setShowDemoAccounts(!showDemoAccounts)}
+              variant="outline"
+              className="w-full"
+            >
+              <User className="w-4 h-4 mr-2" />
+              데모 계정으로 체험하기
+            </Button>
+
+            {showDemoAccounts && (
+              <div className="space-y-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-gray-700 mb-3">
+                  미리 생성된 데모 계정으로 모든 기능을 체험해보세요
+                </p>
+                {demoAccounts.map((account) => (
+                  <Button
+                    key={account.email}
+                    onClick={() => handleDemoSignIn(account.email)}
+                    variant="outline"
+                    className="w-full justify-start h-auto py-3 px-4 bg-white hover:bg-blue-50"
+                    disabled={loadingProvider !== null}
+                  >
+                    {loadingProvider === account.email ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>로그인 중...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between w-full">
+                        <div className="text-left">
+                          <div className="font-semibold text-sm">{account.nickname}</div>
+                          <div className="text-xs text-gray-500">{account.name}</div>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-gray-600">
+                          <Trophy className="w-3 h-3 text-yellow-500" />
+                          <span>Lv.{account.level}</span>
+                          <span className="text-gray-400">·</span>
+                          <span>{account.xp} XP</span>
+                        </div>
+                      </div>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Terms */}
         <p className="text-xs text-center text-gray-500">

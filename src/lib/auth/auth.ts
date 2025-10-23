@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Kakao from "next-auth/providers/kakao";
 import Naver from "next-auth/providers/naver";
+import Credentials from "next-auth/providers/credentials";
 import type { NextAuthConfig } from "next-auth";
 import { v4 as uuidv4 } from 'uuid';
 import { findRows, appendRow, updateRowById, objectToValues } from '../google-sheets/operations';
@@ -22,10 +23,62 @@ export const authConfig: NextAuthConfig = {
       clientId: process.env.NAVER_CLIENT_ID!,
       clientSecret: process.env.NAVER_CLIENT_SECRET!,
     }),
+    Credentials({
+      id: 'demo',
+      name: 'Demo Account',
+      credentials: {
+        email: { label: "Email", type: "text" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email) return null;
+
+        // Verify it's a demo account
+        const email = credentials.email as string;
+        if (!email.includes('@barrierfree.local')) {
+          return null;
+        }
+
+        // Find the demo user in Google Sheets
+        try {
+          const users = await findRows(
+            SHEET_NAMES.USERS,
+            (row) => row.email === email
+          );
+
+          if (users.length === 0) {
+            return null;
+          }
+
+          const user = users[0];
+          return {
+            id: String(user.user_id),
+            email: String(user.email),
+            name: String(user.name || ''),
+          };
+        } catch (error) {
+          console.error('Error authorizing demo user:', error);
+          return null;
+        }
+      },
+    }),
   ],
   callbacks: {
     async signIn({ user, account }) {
       if (!account) return false;
+
+      // Demo accounts are already created, just update last_login
+      if (account.provider === 'demo') {
+        try {
+          const now = new Date().toISOString();
+          await updateRowById(SHEET_NAMES.USERS, 'email', user.email || '', {
+            last_login: now,
+          });
+          return true;
+        } catch (error) {
+          console.error('Error updating demo user login:', error);
+          return false;
+        }
+      }
 
       // 카카오나 네이버의 경우 이메일이 없을 수 있음
       const userEmail = user.email || `${account.provider}_${account.providerAccountId}@placeholder.local`;
