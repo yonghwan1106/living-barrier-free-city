@@ -4,9 +4,8 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Header } from '@/components/layout/Header';
 import {
-  MapPin,
-  ArrowLeft,
   Trophy,
   Calendar,
   Clock,
@@ -14,7 +13,6 @@ import {
   CheckCircle,
   Zap,
 } from 'lucide-react';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 interface QuestWithProgress {
@@ -208,21 +206,7 @@ export default function QuestsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/map">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <h1 className="text-xl font-bold">퀘스트</h1>
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/profile">
-              <MapPin className="h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <Header />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* User Info */}

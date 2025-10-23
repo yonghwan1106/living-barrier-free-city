@@ -2,38 +2,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MapPin, Users, Award, TrendingUp } from "lucide-react";
+import { Header } from "@/components/layout/Header";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-bold">배리어프리 경기</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/map" className="text-sm font-medium hover:text-blue-600">
-              지도
-            </Link>
-            <Link href="/quests" className="text-sm font-medium hover:text-blue-600">
-              퀘스트
-            </Link>
-            <Link href="/teams" className="text-sm font-medium hover:text-blue-600">
-              팀
-            </Link>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" asChild>
-              <Link href="/auth/signin">로그인</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/auth/signin">시작하기</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center px-4 py-24 text-center">

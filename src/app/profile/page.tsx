@@ -4,14 +4,13 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Header } from '@/components/layout/Header';
 import {
   MapPin,
   Award,
   TrendingUp,
   CheckCircle,
   Clock,
-  ArrowLeft,
-  Edit,
   Trophy
 } from 'lucide-react';
 import Link from 'next/link';
@@ -83,21 +82,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/map">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <h1 className="text-xl font-bold">프로필</h1>
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/profile/edit">
-              <Edit className="h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <Header />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* User Info Card */}

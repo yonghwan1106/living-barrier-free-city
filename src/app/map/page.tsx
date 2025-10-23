@@ -7,27 +7,22 @@ import { ReportMarkers } from '@/components/map/ReportMarkers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { Header } from '@/components/layout/Header';
 import {
-  MapPin,
   Plus,
   Search,
   Filter,
   Navigation,
-  Menu,
   X,
-  Eye,
-  User,
-  LogOut
+  Eye
 } from 'lucide-react';
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
 import type { Report } from '@/types';
 
 export default function MapPage() {
   const { data: session } = useSession();
   const [map, setMap] = useState<NaverMap | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -93,56 +88,9 @@ export default function MapPage() {
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-20 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b">
-        <div className="flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <MapPin className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-bold">배리어프리 경기</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            {session ? (
-              <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                  {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                </Button>
-                {isMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                    <div className="p-3 border-b">
-                      <div className="font-semibold">{session.user?.nickname || session.user?.name}</div>
-                      <div className="text-xs text-gray-500">레벨 {session.user?.level || 1} · {session.user?.xp || 0} XP</div>
-                    </div>
-                    <div className="py-1">
-                      <Link href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setIsMenuOpen(false)}>
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          프로필
-                        </div>
-                      </Link>
-                      <button
-                        onClick={() => signOut({ callbackUrl: '/' })}
-                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-                      >
-                        <div className="flex items-center gap-2">
-                          <LogOut className="h-4 w-4" />
-                          로그아웃
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/auth/signin">로그인</Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
+      <div className="absolute top-0 left-0 right-0 z-20">
+        <Header />
+      </div>
 
       {/* Search Bar */}
       <div className="absolute top-20 left-4 right-4 z-10 flex gap-2">
