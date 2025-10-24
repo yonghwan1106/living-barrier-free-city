@@ -103,7 +103,7 @@ export default async function Home() {
 
       {/* Stats Section */}
       <section className="border-y bg-gradient-to-r from-blue-50 to-indigo-50 py-16">
-        <div className="container grid gap-6 px-4 md:grid-cols-4">
+        <div className="container mx-auto grid gap-6 px-4 md:grid-cols-4">
           <Card className="text-center p-6 hover:shadow-lg transition-all hover:scale-105 bg-white border-2 hover:border-blue-200">
             <TrendingUp className="h-12 w-12 text-blue-600 mx-auto mb-3 animate-pulse" />
             <div className="text-4xl font-bold text-blue-600 mb-2">{stats.totalReports}+</div>
@@ -133,7 +133,7 @@ export default async function Home() {
 
       {/* Features Section */}
       <section className="py-24">
-        <div className="container px-4">
+        <div className="container mx-auto px-4">
           <h2 className="mb-12 text-center text-3xl font-bold">핵심 기능</h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             <Card className="p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-2 hover:border-blue-200">
@@ -185,7 +185,7 @@ export default async function Home() {
       {/* CTA Section */}
       <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-24 text-white overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        <div className="container px-4 text-center relative z-10">
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
             지금 바로 시작하세요
           </h2>
@@ -205,7 +205,7 @@ export default async function Home() {
 
       {/* Footer */}
       <footer className="border-t py-8">
-        <div className="container px-4 text-center text-sm text-gray-600">
+        <div className="container mx-auto px-4 text-center text-sm text-gray-600">
           <p>© 2025 배리어프리 경기. All rights reserved.</p>
           <p className="mt-2">2025 경기도 장애인 인권정책 공모전 출품작</p>
         </div>
